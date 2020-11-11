@@ -41,7 +41,7 @@ def change_status():
 	for issue_id in issue_id_list:
 		mydriver.get('https://wits.dasanzhone.com/browse/{}'.format(issue_id))
 		status = mydriver.find_element_by_id('opsbar-opsbar-transitions').text
-		if status == "reOPEN" :
+		if status == "FIXED" :
 			mydriver.find_element_by_id('opsbar-opsbar-transitions').click()
 			time.sleep(3) # need to find the better way
 		else :
