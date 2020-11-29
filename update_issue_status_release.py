@@ -15,14 +15,10 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support import expected_conditions as EC
 
-browser = webdriver.FirefoxProfile('/home/handt/.mozilla/firefox/i56wli45.handt/')
-mydriver = webdriver.Firefox(browser)
-nss_link = 'https://wits.dasanzhone.com/issues/?jql=status%20%3D%20later%20AND%20project%20%3D%2011522%20AND%20fixVersion%20%3D%2072124%20ORDER%20BY%20priority%20DESC%2C%20key%20ASC'
-issue_id_list = []
-rel_id_list = []
-fix_version = "2.02-0035.01"
+#nss_link = 'https://wits.dasanzhone.com/issues/?jql=status%20%3D%20prefixed%20AND%20project%20%3D%2011522%20AND%20fixVersion%20%3D%2072124%20ORDER%20BY%20priority%20DESC%2C%20key%20ASC'
 
-def access_nss_list():
+
+def access_nss_list(nss_link):
 	mydriver.get(nss_link)
 
 def get_issue_list():
@@ -35,7 +31,7 @@ def get_issue_list():
 		rel_id = mydriver.find_element_by_xpath("/html/body/div[1]/section/div[1]/div[3]/div/div/div/div/div/div/div[2]/div/issuetable-web-component/table/tbody/tr[{}]".format(i)).get_attribute("rel")
 		rel_id_list.append(rel_id)
 	print("list of issue",issue_id_list)
-	print("List of rel",rel_id_list)
+#	print("List of rel",rel_id_list)
 
 def change_status():			
 	for issue_id in issue_id_list:
@@ -47,7 +43,7 @@ def change_status():
 		else :
 			print("Don't need to change status")
 
-def update_fix_version():
+def update_fix_version(fix_version):
 	for rel_id in rel_id_list:
 		mydriver.get('https://wits.dasanzhone.com/secure/EditIssue!default.jspa?id={}'.format(rel_id))
 		Fix_Version = mydriver.find_element_by_id('fixVersions-textarea')
@@ -56,7 +52,15 @@ def update_fix_version():
 		mydriver.find_element_by_id('issue-edit-submit').click()
 
 if __name__ == '__main__':
-	access_nss_list()
+	issue_id_list = []
+	rel_id_list = []
+	print("Input NSS list link (View in Issue Navigator): ")
+	nss_link = input()
+	print("Input Fix version (ex. 2.05-0004.01): ")
+	fix_version = input()
+	browser = webdriver.FirefoxProfile('/home/handt/.mozilla/firefox/i56wli45.handt/')
+	mydriver = webdriver.Firefox(browser)
+	access_nss_list(nss_link)
 	get_issue_list()
 	change_status()
-	update_fix_version()
+	update_fix_version(fix_version)
