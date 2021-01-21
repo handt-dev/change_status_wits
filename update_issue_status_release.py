@@ -15,7 +15,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support import expected_conditions as EC
 
-#nss_link = 'https://wits.dasanzhone.com/issues/?jql=status%20%3D%20prefixed%20AND%20project%20%3D%2011522%20AND%20fixVersion%20%3D%2072124%20ORDER%20BY%20priority%20DESC%2C%20key%20ASC'
+#nss_link = 'https://wits.dzsi.net/issues/?jql=status%20%3D%20prefixed%20AND%20project%20%3D%2011522%20AND%20fixVersion%20%3D%2072124%20ORDER%20BY%20priority%20DESC%2C%20key%20ASC'
 
 
 def access_nss_list(nss_link):
@@ -35,9 +35,9 @@ def get_issue_list():
 
 def change_status():			
 	for issue_id in issue_id_list:
-		mydriver.get('https://wits.dasanzhone.com/browse/{}'.format(issue_id))
+		mydriver.get('https://wits.dzsi.net/browse/{}'.format(issue_id))
 		status = mydriver.find_element_by_id('opsbar-opsbar-transitions').text
-		if status == "FIXED" :
+		if status == "SW release" :
 			mydriver.find_element_by_id('opsbar-opsbar-transitions').click()
 			time.sleep(3) # need to find the better way
 		else :
@@ -45,7 +45,7 @@ def change_status():
 
 def update_fix_version(fix_version):
 	for rel_id in rel_id_list:
-		mydriver.get('https://wits.dasanzhone.com/secure/EditIssue!default.jspa?id={}'.format(rel_id))
+		mydriver.get('https://wits.dzsi.net/secure/EditIssue!default.jspa?id={}'.format(rel_id))
 		Fix_Version = mydriver.find_element_by_id('fixVersions-textarea')
 		Fix_Version.send_keys('{}'.format(fix_version))
 		time.sleep(3)
@@ -64,3 +64,4 @@ if __name__ == '__main__':
 	get_issue_list()
 	change_status()
 	update_fix_version(fix_version)
+	mydriver.close()
