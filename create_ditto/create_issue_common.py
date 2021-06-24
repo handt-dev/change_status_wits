@@ -111,8 +111,7 @@ class CreateIssueCommon(object):
 				mydriver.get(new_issue)
 				mydriver.get(nss_link)
 
-
-def main():
+if __name__ == '__main__':
 	print("Starting to running script....")
 	print("Input NSS link: (View in Issue Navigator)")
 	#mydriver.get("https://wits.dzsi.net/browse/NOSVG-17660")
@@ -123,6 +122,3 @@ def main():
 	return_value = handt.get_issue_list()
 	handt.create_issue(return_value[0],return_value[1],return_value[2])
 	mydriver.close()
-
-if __name__ == '__main__':
-	main()
