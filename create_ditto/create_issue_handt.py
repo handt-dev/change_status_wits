@@ -15,45 +15,75 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
-
+from selenium.webdriver.common.keys import Keys
 def access_nss_list(nss_link):
 	mydriver.get(nss_link)
 
 def get_issue_list():
 	total = mydriver.find_element_by_xpath("/html/body/div[1]/section/div[1]/div[3]/div/div/div/div/div/div/div[1]/div[1]/span/span[3]").text
-	print(total)
 	total = int(total) + 1
 	a  = list(range(1, total))
-	print(a)
+	print("PPR have total {} issue".format(total))
 	for i in a:
-		print(i)
+		print("Checking issue ",i)
 		bms_link = 'https://wits.dzsi.net/browse/'
-		ditto_id = mydriver.find_element_by_xpath("/html/body/div[1]/section/div[1]/div[3]/div/div/div/div/div/div/div[2]/div/issuetable-web-component/table/tbody/tr[{}]/td[4]".format(i)).text
-		issue_id = mydriver.find_element_by_xpath("/html/body/div[1]/section/div[1]/div[3]/div/div/div/div/div/div/div[2]/div/issuetable-web-component/table/tbody/tr[{}]".format(i))
+		root_xpath = "/html/body/div[1]/section/div[1]/div[3]/div/div/div/div/div/div/div[2]/div/issuetable-web-component/table/tbody/tr[{}]"
+		ditto_id = mydriver.find_element_by_xpath(root_xpath.format(i)+"/td[4]").text
+		issue_id = mydriver.find_element_by_xpath(root_xpath.format(i))
 		rel_id = issue_id.get_attribute("rel")
 		ditto_id = ditto_id.find("NOSVG")
 		if ditto_id > -1:
 			print("Already created ditto, next")
 		else : 
 			print("Please create ditto")
-			bms_id = mydriver.find_element_by_xpath("/html/body/div[1]/section/div[1]/div[3]/div/div/div/div/div/div/div[2]/div/issuetable-web-component/table/tbody/tr[{}]/td[1]".format(i)).text
+			bms_id = mydriver.find_element_by_xpath(root_xpath.format(i)+"/td[1]").text
 			print(bms_id)
 			url_bms = bms_link + bms_id
-			bms_title = mydriver.find_element_by_xpath("/html/body/div[1]/section/div[1]/div[3]/div/div/div/div/div/div/div[2]/div/issuetable-web-component/table/tbody/tr[{}]/td[2]".format(i)).text
+			bms_title = mydriver.find_element_by_xpath(root_xpath.format(i)+"/td[2]").text
 			print(bms_title)
+
+			priority_type = mydriver.find_element_by_xpath(root_xpath.format(i)+"/td[5]/img")
+			priority = priority_type.get_attribute("alt") # datatype string
+			print(priority)
+
+			issue_type = mydriver.find_element_by_xpath(root_xpath.format(i)+"/td[7]/a/img")
+			issue_type = issue_type.get_attribute("alt") # datatype string
+			print(issue_type)
+
 			url_create = "https://wits.dzsi.net/secure/CreateIssue!default.jspa"
 			mydriver.get(url_create)
+
+			add_issue_type = mydriver.find_element_by_id('issuetype-field')
+			add_issue_type.clear()
+			time.sleep(2)
+			add_issue_type.send_keys(issue_type)
+			time.sleep(2)
+			add_issue_type.send_keys(Keys.TAB)
+			time.sleep(2)
+
 			mydriver.find_element_by_xpath("//input[@name='Next']").click()
+
 			title_wits = mydriver.find_element_by_id('summary') 
-			title_wits.send_keys(bms_title) 
+			title_wits.send_keys(bms_title)
+
+			add_priority = mydriver.find_element_by_id('priority-field')
+			add_priority.clear()
+			time.sleep(2)
+			add_priority.send_keys(priority)
+			time.sleep(2)
+			add_priority.send_keys(Keys.TAB)
+			time.sleep(2)
+
 			Fix_Version = mydriver.find_element_by_id('fixVersions-textarea')
 			Fix_Version.send_keys('{}'.format(fixversion))
+
 			time.sleep(1)
 			Assignee = mydriver.find_element_by_id('assign-to-me-trigger')
 			time.sleep(1)
 			Assignee.click()
 			time.sleep(1)
 			Assignee.click()
+
 			js = "document.getElementById('description').value = '{}';".format(url_bms)
 			mydriver.execute_script(js)
 			time.sleep(2)
@@ -62,8 +92,10 @@ def get_issue_list():
 				if option.text == '[Open] {}'.format(milestone) :
 					option.click()
 					break
+
 			mydriver.find_element_by_id('issue-create-submit').click()
 			# link issue bms to wits
+
 			new_issue = mydriver.current_url
 			print(mydriver.current_url)
 			NOSVG = mydriver.current_url[-11:]
