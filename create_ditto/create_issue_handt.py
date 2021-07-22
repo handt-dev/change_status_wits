@@ -59,7 +59,7 @@ def get_issue_list():
 			time.sleep(2)
 			el = mydriver.find_element_by_id('customfield_10842')
 			for option in el.find_elements_by_tag_name('option') :
-				if option.text == '[In Progress] {}'.format(milestone) :
+				if option.text == '[Open] {}'.format(milestone) :
 					option.click()
 					break
 			mydriver.find_element_by_id('issue-create-submit').click()
@@ -86,9 +86,10 @@ if __name__ == '__main__':
 	milestone = input()
 	print("\nInput fix version (ex: [GPON2][Oversea_FIBRAIN]H660GM-A_EN7528_ER-IT): ")
 	fixversion = input()
-	browser = webdriver.FirefoxProfile('/home/handt/.mozilla/firefox/i56wli45.handt/')
+	browser = webdriver.FirefoxProfile('/home/handt/.mozilla/firefox/6vjcmo6u.default-release')
 	mydriver = webdriver.Firefox(browser)
+	mydriver.get("https://wits.dzsi.net/browse/NOSVG-20165")
 	access_nss_list(nss_link)
 	get_issue_list()
 	mydriver.close()
-	mydriver.exit()
+#	mydriver.exit()
